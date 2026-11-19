@@ -57,7 +57,7 @@ npm run build
 3. Commiti väikeste tükkidena, sõnum eesti keeles ja viitega issuele (`Refs #3`).
 4. Ava PR `main`-i vastu, kirjelduses `Closes #<nr>`.
 5. **CI** (`.github/workflows/ci.yml`) käivitab igal PR-il `npm ci`, `lint`, `test` ja `build`.
-6. Teine tiimiliige vaatab PR-i üle. `main` on kaitstud: mergida saab alles rohelise CI ja heakskiiduga.
+6. Teine tiimiliige vaatab PR-i üle. **Otse `main`-i ei pushi keegi** (kokkulepe). Tehniline kaitse (roheline CI ja heakskiit kohustuslikud) lisandub, kui õpetaja selle seadistab (#16).
 
 Täpsemad reeglid on failis [AGENTS.md](AGENTS.md).
 

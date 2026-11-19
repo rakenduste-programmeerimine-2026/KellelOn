@@ -54,10 +54,12 @@ Tööjärjekord, kuupäevad ja sõltuvused on kinnitatud issue's **#14**. Me tö
 - Andmebaasi muudatused tehakse **ainult migratsioonidena** (`npx supabase migration new <nimi>`). Juba mergitud migratsiooni ei muudeta.
 - Uus tabel → RLS sisse samas migratsioonis.
 - UI tekstid on eesti keeles.
+- **Testitav loogika** (valideerimine, järjestus, kuupäevad) on puhaste funktsioonidena `src/lib/`-is. Need failid impordivad teisi faile **relatiivselt ja `.ts` laiendiga** (`import { x } from "./validate.ts"`), mitte `@/` aliasega. Põhjus: `npm test` jookseb otse Node'is (`node --test`) ja Node `@/` aliaseid ei tunne. Vaated võivad `@/`-i kasutada.
+- Cache Components (`cacheComponents` failis `next.config.ts`) on teadlikult välja lülitatud. Ära lülita seda sisse ilma tiimi kokkuleppeta.
 
 ## Koodiülevaatus
 
-Repos on ülevaatusagent `.claude/agents/code-reviewer.md`. Claude Code'is: *"Kasuta code-reviewer agenti ja vaata see haru üle"*. Agent ainult loeb ega muuda midagi.
+Repos on ülevaatusagent `.claude/agents/code-reviewer.md`. Claude Code'is: *"Kasuta code-reviewer agenti ja vaata see haru üle"*. Agent on juhendatud ainult lugema (git, testid, lint) ega muuda faile. See on juhis, mitte tehniline piirang.
 
 - **Baas on alati `origin/main`**, mitte haru enda upstream.
 - Raport kirjutatakse **eesti keeles**.
