@@ -41,6 +41,7 @@ Tööjärjekord, kuupäevad ja sõltuvused on kinnitatud issue's **#14**. Me tö
 - PR-i kirjeldusse `Closes #<nr>`.
 - Ülevaataja on teine tiimiliige. **Oma PR-i ära mergi ilma heakskiiduta.**
 - Enne PR-i peavad läbima: `npm test`, `npm run lint`, `npm run build`.
+- Enne PR-i lase üle vaadata ka agendil `code-reviewer` (vt "Koodiülevaatus"). See ei asenda tiimiliikme ülevaatust.
 - **Saladused ei lähe kunagi gitti**: `.env.local`, Supabase'i `service_role` võti, paroolid. Uus muutuja lisatakse `.env.example`-sse ilma väärtuseta.
 - Kontakti nime ega kontaktandmeid ei kirjutata reposse, issue'desse ega slaididele.
 
@@ -53,3 +54,25 @@ Tööjärjekord, kuupäevad ja sõltuvused on kinnitatud issue's **#14**. Me tö
 - Andmebaasi muudatused tehakse **ainult migratsioonidena** (`npx supabase migration new <nimi>`). Juba mergitud migratsiooni ei muudeta.
 - Uus tabel → RLS sisse samas migratsioonis.
 - UI tekstid on eesti keeles.
+
+## Koodiülevaatus
+
+Repos on ülevaatusagent `.claude/agents/code-reviewer.md`. Claude Code'is: *"Kasuta code-reviewer agenti ja vaata see haru üle"*. Agent ainult loeb ega muuda midagi.
+
+- **Baas on alati `origin/main`**, mitte haru enda upstream.
+- Raport kirjutatakse **eesti keeles**.
+- 🔴 leiud parandatakse enne PR-i. 🟡 ja 🟢 leiud kas parandatakse või kirjutatakse PR-i kirjeldusse, miks need jäävad.
+- Agent ei asenda tiimiliikme ülevaatust. SPEC nõuab, et iga liige oskab koodi ja otsuseid selgitada, ka AI abiga tehtud tööd.
+
+### Selle projekti kontrollnimekiri
+
+Vaata need üle enne üldist kontrollnimekirja:
+
+1. **Ligipääs:** igal tabelil on RLS ja reegel `owner_id = auth.uid()` iga operatsiooni (select, insert, update, delete) jaoks. Server ei usalda kliendi saadetud `owner_id`-d ega teise kasutaja `id`-d: `markReturned`/`undoReturned` võõra asjaga ei muuda midagi ja tagastab vea.
+2. **Valideerimine:** reeglid (asi 1–80 märki, laenaja 1–50 märki, kuupäev mitte tulevikus, tühikud trimmitud) on ühes failis ja seda kasutavad nii vorm kui ka server. Andmebaasi check-piirangud on samad.
+3. **Leping:** `src/lib/actions.ts` signatuur ja `Loan`/`Result<T>` tüübid on samad, mis issue #2-s kokku lepiti. Kui need muutuvad, peavad muutuma kõik kasutajad (vaated, mock, testid).
+4. **Põhifunktsioonid:** nimekirjas on ainult `returnedAt = null` asjad, vanim `lentOn` eespool. Otsing leiab nii asja kui ka inimese järgi, suur- ja väiketähtedest sõltumata. Kuupäevad ja "kui kaua väljas" arvestavad Eesti ajavööndit (päev ei vahetu kell 02:00).
+5. **Saladused ja privaatsus:** `.env*` (v.a `.env.example`) pole gitis, `service_role` võtit rakendus ei kasuta, vead ega logid ei näita kasutajale tehnilisi detaile. Kontakti nime ega kontaktandmeid pole koodis, testides ega dokumentides.
+6. **Migratsioonid:** muudatus on uues migratsioonifailis, juba mergitud migratsiooni ei muudeta, uus tabel saab RLS-i samas failis.
+7. **Testid:** muutunud käitumisel (valideerimine, RLS, järjestus, tagastamine) on test, mis kukuks läbi, kui käitumine katki läheks.
+8. **Kasutaja:** UI tekstid ja veateated on eesti keeles. Lisamine jääb kiireks (kontakt: "paar sekundit"), uus kohustuslik väli või lisasamm on leid.
