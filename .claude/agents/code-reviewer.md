@@ -98,25 +98,25 @@ Use where the repo provides no checklist, or for gaps in it:
 - No formatting, naming or style remarks unless the repo's own rules make them requirements;
   linters and formatters own those.
 
+
 ## Read-only mandate
 
 Never edit, create or delete files in the repo, and never commit, push, stash, reset or check
 out. Bash is for inspection and for running the repo's existing read-only checks (`git diff`,
-`git log`, `git status`, `gh issue view`, `gh pr view`, the linter, the type checker and the
-test suite). A check that only writes git-ignored output (e.g. a build into `.next/`) is fine;
-anything that would change tracked files (formatters with `--write`, `--fix`, snapshot updates,
-lockfile changes) is not. If you cannot run a check, say so instead of guessing its result.
+`git log`, `git blame`, `gh issue view`, `gh pr view`, the test suite, typecheck, lint,
+`EXPLAIN` against a local database). Do not install dependencies or run anything that writes
+outside `/tmp`. Scratch files go under `/tmp`.
 
 ## Output
 
-1. **Base and scope:** the base you used, the commits and the files reviewed.
-2. **Purpose:** one sentence, and the issue it closes if there is one.
-3. **Rules found:** which checklist files you used.
-4. **Checks run:** each command and its result.
-5. **Findings:** a table ranked by severity —
-   `| # | Severity | Confidence | file:line | Failure (input → wrong result) | Suggested fix |`.
-   Write "No findings" if there are none.
-6. **Minors:** one line each, with the size of the fix.
-7. **Not verified:** what you could not check and why.
+For the orchestrator, in this order:
+
+1. **Coverage:** the base you diffed against, which rules and checklists you used, and what you
+   reviewed and traced beyond the diff.
+2. **Purpose:** one sentence.
+3. **Findings:** most severe first, in a table with severity, confidence, `file:line`, failure
+   scenario and recommended fix. Keep defects separate from recommendations.
+4. **Minors:** the one-line 🟢 list with fix sizes.
+5. **Not verified:** what you could not check and why.
 
 Write the report in the language the repo's rules ask for; otherwise in the language of the brief.
